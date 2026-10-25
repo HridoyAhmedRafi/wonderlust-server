@@ -47,6 +47,27 @@ app.get("/destinations/:id", async (req, res) => {
   res.send(result);
 });
 
+app.patch("/destinations/:id", async (req, res) => {
+  const id = req.params.id;
+  const filter = { _id: new ObjectId(id) };
+  const updatedDestination = req.body;
+  // const options = { upsert: true };
+
+  const updatedDoc = {
+    $set: updatedDestination,
+  };
+
+  const result = await destinations.updateOne(filter, updatedDoc);
+  res.send(result);
+});
+
+app.delete("/destinations/:id", async (req, res) => {
+  const id = req.params.id;
+  const query = { _id: new ObjectId(id) };
+  const result = await destinations.deleteOne(query);
+  res.send(result);
+});
+
 app.listen(PORT, (req, res) => {
   console.log(`Server is running on PORT ${PORT}`);
 });
