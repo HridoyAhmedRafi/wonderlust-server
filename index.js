@@ -22,6 +22,7 @@ export async function connectToMongoDB() {
 const mongoClient = await connectToMongoDB();
 const db = mongoClient.db("wonderlust");
 const destinations = db.collection("destinations");
+const bookings = db.collection("bookings");
 
 // http://localhost:5000/add-destination
 app.post("/add-destination", async (req, res) => {
@@ -30,9 +31,30 @@ app.post("/add-destination", async (req, res) => {
   res.send(result);
 });
 
+// http://localhost:5000/bookings
+app.post("/bookings", async (req, res) => {
+  const data = req.body;
+  // delete data._id;
+  const result = await bookings.insertOne(data);
+  res.send(result);
+});
+// http://localhost:5000/bookings
+app.get("/bookings/:email", async (req, res) => {
+  const email = req.params.email;
+  const result = await bookings.find({ email: email }).toArray();
+  res.send(result);
+});
+
 //http://localhost:5000
 app.get("/", (req, res) => {
   res.send({ Msg: "API is working" });
+});
+
+app.delete("/bookings/:id", async (req, res) => {
+  const id = req.params.id;
+  const query = { _id: new ObjectId(id) };
+  const result = await bookings.deleteOne(query);
+  res.send(result);
 });
 
 app.get("/destinations", async (req, res) => {
