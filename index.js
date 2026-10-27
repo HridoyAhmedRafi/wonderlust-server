@@ -34,7 +34,13 @@ app.post("/add-destination", async (req, res) => {
 // http://localhost:5000/bookings
 app.post("/bookings", async (req, res) => {
   const data = req.body;
-  // delete data._id;
+  const existing = await bookings.findOne({
+    email: data.email,
+    destinationId: data.destinationId,
+  });
+  if (existing) {
+    return res.send({ status: "Already added" });
+  }
   const result = await bookings.insertOne(data);
   res.send(result);
 });
